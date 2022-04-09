@@ -37,7 +37,7 @@ describe("Platform contract", function () {
     it("register person with no referal", async function () {
         await platform.register(zeroAdd);
         expect(await platform.registrationCheck(addr[0].address)).to.equal(true);
-        
+        //console.log(await platform.duration())
     });
     it("register person with referal", async function () {
       
@@ -62,7 +62,7 @@ describe("Platform contract", function () {
   describe("startSaleRound", function () {
     it("startSaleRound first", async function () {
       await platform.startSaleRound();
-      expect(await platform.statusOf()).to.equal(0);
+      expect(await platform.statusOf()).to.equal(1);
       expect(await token.balanceOf(platform.address)).to.equal(parseEther("100000")) 
     });
     it("msg.sender not admin", async function () {
@@ -133,7 +133,7 @@ describe("Platform contract", function () {
       await expect(platform.startTradeRound()).to.be.revertedWith("sale round not end");
       skipTime(60*60*25)
       await platform.startTradeRound();
-      expect(await platform.statusOf()).to.equal(1);
+      expect(await platform.statusOf()).to.equal(2);
       await expect(platform.startTradeRound()).to.be.revertedWith("trade round already started");
       expect(await token.balanceOf(platform.address)).to.equal(0)
      
@@ -143,7 +143,7 @@ describe("Platform contract", function () {
       await platform.connect(addr[2]).buy(parseEther("100000"),{value:parseEther("100.1")});
       
       await platform.startTradeRound();
-      expect(await platform.statusOf()).to.equal(1);
+      expect(await platform.statusOf()).to.equal(2);
       expect(await token.balanceOf(platform.address)).to.equal(0)
      
     });

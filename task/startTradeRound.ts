@@ -2,7 +2,7 @@ import {task} from "hardhat/config";
 import "@nomiclabs/hardhat-waffle";
 import { parseEther } from "ethers/lib/utils";
 
-task("startSaleRound", "startSaleRound")
+task("startTradeRound", "startSaleRound")
     .setAction(async function (taskArgs, hre) {
         const network = hre.network.name;
         console.log(network);

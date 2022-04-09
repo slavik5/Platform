@@ -10,17 +10,18 @@ contract Platform is AccessControl{
 
     address tokenAddress;
     //uint256 lastsalePrice= 10**13;
-    uint256 salePrice=10**13;
-    uint256 duration; 
-    uint256 saleStartTime;
-    uint256 tradeStartTime;
-    uint256 saleSupply;
-    uint256 tradingVolume;
+    uint256 private salePrice=10**13;
+    uint256 private duration; 
+    uint256 private saleStartTime;
+    uint256 private tradeStartTime;
+    uint256 private saleSupply;
+    uint256 private tradingVolume;
 
     enum STATUS{
+        FIRSTSTART,
         SELL,
-        TRADE,
-        FIRSTSTART
+        TRADE
+        
     }
     STATUS status;
     struct userRegistration{
