@@ -17,7 +17,7 @@ module.exports = {
     rinkeby: {
       url: process.env.ALCHEMY_API_KEY,
       gas: "auto",
-      //gasPrice: 20000000000,
+      gasPrice: 20000000000,
       accounts: {
         mnemonic: process.env.MNEMONIC,
       },

@@ -40,12 +40,22 @@ describe("Platform contract", function () {
         
     });
     it("register person with referal", async function () {
-      await platform.register(addr[1].address);
-      expect(await platform.usersRefOf(addr[0].address)).to.equal(addr[1].address);
+      
+      await platform.connect(addr[2]).register(zeroAdd);
+      await platform.connect(addr[1]).register(addr[2].address);
+          
+      expect(await platform.usersRefOf(addr[1].address)).to.equal(addr[2].address);
     });
     it("already register", async function () {
-      await platform.register(addr[1].address);
-      await expect(platform.register(addr[2].address)).to.be.revertedWith("already register");
+      await platform.connect(addr[2]).register(zeroAdd);
+      await expect(platform.connect(addr[2]).register(zeroAdd)).to.be.revertedWith("already register");
+      await platform.connect(addr[1]).register(addr[2].address);
+      await expect(platform.connect(addr[1]).register(addr[2].address)).to.be.revertedWith("already register");
+    });
+    it("wrong ref", async function () {
+      await platform.connect(addr[2]).register(zeroAdd);
+      
+      await expect(platform.connect(addr[1]).register(addr[3].address)).to.be.revertedWith("wrong ref");
     });
     
   });
@@ -190,23 +200,25 @@ describe("Platform contract", function () {
       await platform.connect(addr[2]).register(zeroAdd);
       await platform.connect(addr[1]).register(addr[2].address);
       await platform.connect(addr[3]).register(addr[1].address);      
-      await platform.connect(addr[2]).buy(parseEther("5"),{value:parseEther("10.0")});
+      await platform.connect(addr[2]).buy(parseEther("5"),{value:parseEther("1.0")});
       
-      await platform.connect(addr[1]).buy(parseEther("3"),{value:parseEther("10.0")})
-      await platform.connect(addr[3]).buy(parseEther("2"),{value:parseEther("10.0")})
+      await platform.connect(addr[1]).buy(parseEther("3"),{value:parseEther("1.0")})
+      await platform.connect(addr[3]).buy(parseEther("2"),{value:parseEther("1.0")})
       skipTime(60*60*25)
       await platform.startTradeRound();
       await token.connect(addr[2]).approve(platform.address, parseEther("5"));
-      await platform.connect(addr[2]).addOrder(parseEther("5"),parseEther("0.001"))
-      await platform.connect(addr[1]).redeemOrder(addr[2].address,parseEther("5"),{value:parseEther("1.0")})
-      
+      await platform.connect(addr[2]).addOrder(parseEther("5"),parseEther("0.0033"))
+      await platform.connect(addr[1]).redeemOrder(addr[2].address,parseEther("5"),{value:parseEther("0.0033")})
+      console.log(await platform.tradingVolumeOf())
+
       await token.connect(addr[1]).approve(platform.address, parseEther("5"));
-      await platform.connect(addr[1]).addOrder(parseEther("3"),parseEther("0.001"))
+      await platform.connect(addr[1]).addOrder(parseEther("3"),parseEther("0.002"))
       await platform.connect(addr[4]).redeemOrder(addr[1].address,parseEther("3"),{value:parseEther("1.0")})
-      
+      console.log(await platform.tradingVolumeOf())
       await token.connect(addr[3]).approve(platform.address, parseEther("5"));
       await platform.connect(addr[3]).addOrder(parseEther("2"),parseEther("0.001"))
       await platform.connect(addr[4]).redeemOrder(addr[3].address,parseEther("1"),{value:parseEther("1.0")})
+      
       expect(await token.balanceOf(addr[2].address)).to.equal(parseEther("0")) 
       expect(await token.balanceOf(addr[1].address)).to.equal(parseEther("5")) 
       expect(await token.balanceOf(addr[4].address)).to.equal(parseEther("4")) 

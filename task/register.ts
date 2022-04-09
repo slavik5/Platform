@@ -13,8 +13,8 @@ task("register", "register")
         const token = await hre.ethers.getContractAt("Token", process.env.Token_CONTRACT as string);
         const platform = await hre.ethers.getContractAt("Platform", process.env.Platform_CONTRACT as string);
         
-        await token.grantRole(await token.DEFAULT_ADMIN_ROLE(), platform.address);
-        await platform.connect(addr[taskArgs.account]).register(addr[taskArgs.ref]);
+        await platform.connect(addr[1]).register(platform.address);
+        //await platform.connect(addr[taskArgs.account]).register(addr[taskArgs.ref]);
         console.log('register task Done!');
 
     });

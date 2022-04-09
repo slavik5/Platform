@@ -11,7 +11,7 @@ task("startSaleRound", "startSaleRound")
         const token = await hre.ethers.getContractAt("Token", process.env.Token_CONTRACT as string);
         const platform = await hre.ethers.getContractAt("Platform", process.env.Platform_CONTRACT as string);
         
-        
+        await token.grantRole(await token.DEFAULT_ADMIN_ROLE(), platform.address);
         await platform.startSaleRound();
         console.log('startSaleRound task Done!');
 

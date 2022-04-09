@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 import "./Token.sol";
-
+import "hardhat/console.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 //import "@openzeppelin/contracts/utils/Address.sol";
 
@@ -66,10 +66,16 @@ contract Platform is AccessControl{
     }
     // if no referal call function with zeroaddress or contract address
     function register(address referal_) external{
-        //require(users[referal_].registerOrNot==true,"referal had registration");
-        require(users[msg.sender].registerOrNot==false,"already register");
-        users[msg.sender].referal=referal_;
-        users[msg.sender].registerOrNot=true;
+        if(referal_==address(0)||referal_==address(this)){
+            require(users[msg.sender].registerOrNot==false,"already register");
+            users[msg.sender].referal=referal_;
+            users[msg.sender].registerOrNot=true;
+        }else{
+            require(users[referal_].registerOrNot==true,"wrong ref");
+            require(users[msg.sender].registerOrNot==false,"already register");
+            users[msg.sender].referal=referal_;
+            users[msg.sender].registerOrNot=true;
+        }
         
 
     }
@@ -145,14 +151,17 @@ contract Platform is AccessControl{
             if(users[users[whichOrder].referal].referal==address(0)){
                 payable(users[whichOrder].referal).transfer(amount_*orders[whichOrder].price*25/1000/orders[whichOrder].amount);
                 payable(whichOrder).transfer(amount_*orders[whichOrder].price*975/1000/orders[whichOrder].amount);
+            }else{
+                payable(users[users[whichOrder].referal].referal).transfer(amount_*orders[whichOrder].price*25/1000/orders[whichOrder].amount);
+                payable(users[whichOrder].referal).transfer(amount_*orders[whichOrder].price*25/1000/orders[whichOrder].amount);
+                payable(whichOrder).transfer(amount_*orders[whichOrder].price*95/100/orders[whichOrder].amount);
             }
-            payable(users[users[whichOrder].referal].referal).transfer(amount_*orders[whichOrder].price*25/1000/orders[whichOrder].amount);
-            payable(users[whichOrder].referal).transfer(amount_*orders[whichOrder].price*25/1000/orders[whichOrder].amount);
-            payable(whichOrder).transfer(amount_*orders[whichOrder].price*95/100/orders[whichOrder].amount);
         }
         
         Token(tokenAddress).transferFrom(whichOrder,msg.sender,amount_);
-        payable(msg.sender).transfer(msg.value-amount_*orders[whichOrder].price/orders[whichOrder].amount);
+        
+        payable(msg.sender).transfer(msg.value-(amount_*orders[whichOrder].price/orders[whichOrder].amount));
+        
         tradingVolume+=amount_*orders[whichOrder].price/orders[whichOrder].amount;
         orders[whichOrder].amount = orders[whichOrder].amount-amount_;
     }
