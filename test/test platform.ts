@@ -72,7 +72,7 @@ describe("Platform contract", function () {
       await platform.startSaleRound();
       await platform.connect(addr[2]).register(zeroAdd);    
       await platform.connect(addr[2]).buy(parseEther("10000"),{value:parseEther("10.0")});
-      console.log(await platform.salePriceOf())
+      console.log(await platform.salePrice())
      
       skipTime(60*60*25)
       await platform.startTradeRound();
@@ -81,13 +81,13 @@ describe("Platform contract", function () {
       await platform.connect(addr[2]).addOrder(parseEther("10000"),parseEther("1"))
       await platform.connect(addr[1]).redeemOrder(addr[2].address,parseEther("10000"),{value:parseEther("10")})
       await platform.howMuchToPay(parseEther("10000"))
-      console.log(await platform.tradingVolumeOf())
+      console.log(await platform.tradingVolume())
       skipTime(60*60*24)
       await platform.startSaleRound()
       await expect(platform.startSaleRound()).to.be.revertedWith("sale round already started");
       
-      console.log(await platform.salePriceOf())
-      console.log(await platform.saleSupplyOf())
+      console.log(await platform.salePrice())
+      console.log(await platform.saleSupply())
       
       
     });
@@ -112,7 +112,7 @@ describe("Platform contract", function () {
       
       
       //await expect(await platform.connect(addr[2]).buy(parseEther("2"),{value:parseEther("10.0")}))
-      //.to.changeEtherBalance(platform.address, platform.salePriceOf()*2);
+      //.to.changeEtherBalance(platform.address, platform.salePrice()*2);
       
     });
     it("check requires", async function () {
@@ -209,12 +209,12 @@ describe("Platform contract", function () {
       await token.connect(addr[2]).approve(platform.address, parseEther("5"));
       await platform.connect(addr[2]).addOrder(parseEther("5"),parseEther("0.0033"))
       await platform.connect(addr[1]).redeemOrder(addr[2].address,parseEther("5"),{value:parseEther("0.0033")})
-      console.log(await platform.tradingVolumeOf())
+      console.log(await platform.tradingVolume())
 
       await token.connect(addr[1]).approve(platform.address, parseEther("5"));
       await platform.connect(addr[1]).addOrder(parseEther("3"),parseEther("0.002"))
       await platform.connect(addr[4]).redeemOrder(addr[1].address,parseEther("3"),{value:parseEther("1.0")})
-      console.log(await platform.tradingVolumeOf())
+      console.log(await platform.tradingVolume())
       await token.connect(addr[3]).approve(platform.address, parseEther("5"));
       await platform.connect(addr[3]).addOrder(parseEther("2"),parseEther("0.001"))
       await platform.connect(addr[4]).redeemOrder(addr[3].address,parseEther("1"),{value:parseEther("1.0")})

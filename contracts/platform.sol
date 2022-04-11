@@ -10,12 +10,12 @@ contract Platform is AccessControl{
 
     address tokenAddress;
     //uint256 lastsalePrice= 10**13;
-    uint256 private salePrice=10**13;
+    uint256 public salePrice=10**13;
     uint256 private duration; 
     uint256 private saleStartTime;
     uint256 private tradeStartTime;
-    uint256 private saleSupply;
-    uint256 private tradingVolume;
+    uint256 public saleSupply;
+    uint256 public tradingVolume;
 
     enum STATUS{
         FIRSTSTART,
@@ -44,15 +44,7 @@ contract Platform is AccessControl{
         saleSupply=saleSupply_;
         _setupRole(DEFAULT_ADMIN_ROLE, admin_);
     }
-    function salePriceOf() external view returns(uint256){
-        return salePrice;
-    }
-    function tradingVolumeOf() external view returns(uint256){
-        return tradingVolume;
-    }
-    function saleSupplyOf() external view returns(uint256){
-        return saleSupply;
-    }
+    
     function usersRefOf(address account) external view returns(address){
         return users[account].referal;
     }
